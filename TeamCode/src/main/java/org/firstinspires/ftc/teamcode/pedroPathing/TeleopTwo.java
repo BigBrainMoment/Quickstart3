@@ -7,19 +7,21 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+//gamepad 1 is driver
+//gamepad 2 is operator
 @TeleOp
 @Configurable
-public class Teleop extends LinearOpMode {
+public class TeleopTwo extends LinearOpMode {
     int count = 0;
-    double setSpeed = 1;
+    double setSpeed;
 
     @Override
     public void runOpMode() throws InterruptedException {
 // Declaring motors
 
         CRServo ls, rs;
-        ls = hardwareMap.get(CRServo.class,"leftServo");
-        rs = hardwareMap.get(CRServo.class,"rightServo");
+        ls = hardwareMap.get(CRServo.class, "leftServo");
+        rs = hardwareMap.get(CRServo.class, "rightServo");
 
         DcMotor FL, FR, BL, BR, fly;
         FL = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -27,12 +29,11 @@ public class Teleop extends LinearOpMode {
         BL = hardwareMap.get(DcMotor.class, "backLeft");
         BR = hardwareMap.get(DcMotor.class, "backRight");
 
-        fly = hardwareMap.get(DcMotor.class,"flywheel");
+        fly = hardwareMap.get(DcMotor.class, "flywheel");
 
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         fly.setDirection(DcMotorSimple.Direction.REVERSE);
-        ls.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         waitForStart();
@@ -41,7 +42,7 @@ public class Teleop extends LinearOpMode {
 //The Drivetrain Code
         while (opModeIsActive()) {
 
-            double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = -gamepad1.right_stick_x;
 
@@ -75,48 +76,33 @@ public class Teleop extends LinearOpMode {
             if(gamepad1.dpad_left){
                 setSpeed = 2.25;
             }
-
-// Flywheel/Launch code (made continuous so we don't have to hold down)
+// Flywheel/Launch code (made continuous so we don't have to hold down) (different speeds?)
             //track how many times pressed
-            if(gamepad1.leftBumperWasPressed()){
+            if (gamepad2.leftBumperWasPressed()) {
                 count++;
             }
 
             //if pressed twice/divisible by 2 it will stop motor, pressed once makes it go, etc
-            if(count % 2 != 0){
+            if (count % 2 != 0) {
                 fly.setPower(0);
 
-            }else if(count == 0){
+            } else if (count == 0) {
                 fly.setPower(0);
-            }else{
-                fly.setPower(.70);
+            } else {
+                fly.setPower(.75);
             }
 
-
-
-
-            if(gamepad1.bWasPressed()){
-                fly.setPower(.80);
-            }
-            if (gamepad1.xWasPressed()){
-                fly.setPower(0);
-            }
-
-
-
- //Servo push into flywheel
-            if(gamepad1.aWasPressed()){
+            //Servo push into flywheel
+            if (gamepad2.aWasPressed()) {
                 rs.setPower(.50);
-                ls.setPower(.50);
-            }
-            if(gamepad1.aWasReleased()){
-                rs.setPower(-.50);
                 ls.setPower(-.50);
             }
 
-
+            if (gamepad2.aWasReleased()) {
+                rs.setPower(0);
+                ls.setPower(0);
+            }
 
         }
     }
 }
-
