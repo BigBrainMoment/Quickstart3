@@ -1,76 +1,81 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-public class Archive extends LinearOpMode {
-    DcMotor FL;
-    DcMotor FR;
-    DcMotor BL;
-    DcMotor BR;
-
-    int drivetrainconvert = 17;
-    double CPR = 537.7;
-    int armCPR = 8192;
-    double diameter = 9.6; // Replace with your wheel/spool's diameter
-    double circumference = Math.PI * diameter;
-
-
+public class Archive {
+    private DcMotor FL, FR, BL, BR, fly;
+    private CRServo ls, rs;
     private ElapsedTime myTimer = new ElapsedTime();
-    public void launch(int number){
-        CRServo ls, rs;
+    private int drivetrainconvert = 17;
+
+
+    // Declaring the motors for a class that does not have OpModes
+    public Archive(HardwareMap hardwareMap) {
+
+        ///     hardwareMap is a type of HardwareMap that is automatically
+        ///     declared in LinearOpMode. What we are doing here is replacing
+        ///     that with a different variable name (I chose to not change),
+        ///     because we are not running anything with OpMode.
+        fly = hardwareMap.get(DcMotor.class,"flywheel");
+
         ls = hardwareMap.get(CRServo.class,"leftServo");
         rs = hardwareMap.get(CRServo.class,"rightServo");
-        myTimer.time();
 
-        for(int i = 0; i <= number; i++){
-            ls.setPower(.5);
-            rs.setPower(.5);
+        FL = hardwareMap.get(DcMotor.class, "frontLeft");
+        FR = hardwareMap.get(DcMotor.class, "frontRight");
+        BL = hardwareMap.get(DcMotor.class, "backLeft");
+        BR = hardwareMap.get(DcMotor.class, "backRight");
 
-            if(myTimer.seconds() == 0.5){
-                ls.setPower(0);
-                rs.setPower(0);
-                myTimer.reset();
-            }
-
-        }
-
-    }
-    public void fly(double speed){
-        DcMotor fly;
-        fly = hardwareMap.get(DcMotor.class,"flywheel");
+        // directions
+        FR.setDirection(DcMotorSimple.Direction.REVERSE);
+        BR.setDirection(DcMotorSimple.Direction.REVERSE);
         fly.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
 
+
+    // setting the speed of the flywheel
+    public void flywheelSet(double speed) {
+        fly.setDirection(DcMotorSimple.Direction.REVERSE);
         fly.setPower(speed);
     }
 
-    public void push(double degrees){
-        CRServo ls, rs;
-        ls = hardwareMap.get(CRServo.class,"leftServo");
-        rs = hardwareMap.get(CRServo.class,"rightServo");
-        ls.setDirection(DcMotorSimple.Direction.REVERSE);
+    // pushing the ball into the flywheel, launching.
+    public void launching(int number) {
+        // start counting
+        myTimer.reset();
 
-        rs.setPower(degrees);
-        ls.setPower(degrees);
-    }
+        for (int i = 0; i < number; i++) {
+            ls.setPower(0.5);
+            rs.setPower(0.5);
 
-    public void resetencoders() {
+            // wait 0.4 seconds
+            while (myTimer.seconds() >= 0.4) {
 
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                ///     I did try:
+                ///
+                ///     if(myTimer.seconds() < 0.4) {
+                ///
+                ///     }
+                ///
+                ///     the problem is that it only checks once,
+                ///     and I need it to wait. It has a line under
+                ///     it because the loop is empty which is bad.
 
-        //the following means that the program does not use pid feedback loop for accurate motor movements. this is necessary for encoder-based autonomous programs.
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+
+            // if you got lost we still inside the for loop
+            // and we are now turing off the motors
+            // and recounting the time
+            ls.setPower(0);
+            rs.setPower(0);
+            // reset timer for the next shot
+            myTimer.reset();
+        }
     }
 
     public void drive(int desiredPosition) {
@@ -95,11 +100,12 @@ public class Archive extends LinearOpMode {
         BL.setPower(0);
         BR.setPower(0);
     }
-    @Override
-    public void runOpMode() throws InterruptedException {
 
+    // Pusher method, kinda don't need it
+    public void push(double power) {
+        ls.setPower(-power); // reverse if needed
+        rs.setPower(power);
     }
 
+
 }
-
-

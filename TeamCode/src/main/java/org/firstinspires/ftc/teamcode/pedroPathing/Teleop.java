@@ -34,9 +34,9 @@ public class Teleop extends LinearOpMode {
         fly.setDirection(DcMotorSimple.Direction.REVERSE);
         ls.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
         waitForStart();
         if (isStopRequested()) return;
+
 
 //The Drivetrain Code
         while (opModeIsActive()) {
@@ -49,7 +49,6 @@ public class Teleop extends LinearOpMode {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-
 
             double frontLeftPower = 0.5 * ((y + x + rx) / denominator);
             double backLeftPower = 0.5 * ((y - x + rx) / denominator);

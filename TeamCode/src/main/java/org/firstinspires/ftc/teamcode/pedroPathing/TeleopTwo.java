@@ -42,7 +42,7 @@ public class TeleopTwo extends LinearOpMode {
 //The Drivetrain Code
         while (opModeIsActive()) {
 
-            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = -gamepad1.right_stick_x;
 
@@ -76,32 +76,46 @@ public class TeleopTwo extends LinearOpMode {
             if(gamepad1.dpad_left){
                 setSpeed = 2.25;
             }
-// Flywheel/Launch code (made continuous so we don't have to hold down) (different speeds?)
+
+// Flywheel/Launch code (made continuous so we don't have to hold down)
             //track how many times pressed
-            if (gamepad2.leftBumperWasPressed()) {
+            if(gamepad2.leftBumperWasPressed()){
                 count++;
             }
 
             //if pressed twice/divisible by 2 it will stop motor, pressed once makes it go, etc
-            if (count % 2 != 0) {
+            if(count % 2 != 0){
                 fly.setPower(0);
 
-            } else if (count == 0) {
+            }else if(count == 0){
                 fly.setPower(0);
-            } else {
-                fly.setPower(.75);
+            }else{
+                fly.setPower(.70);
             }
 
+
+
+
+            if(gamepad2.bWasPressed()){
+                fly.setPower(.80);
+            }
+            if (gamepad2.xWasPressed()){
+                fly.setPower(0);
+            }
+
+
+
             //Servo push into flywheel
-            if (gamepad2.aWasPressed()) {
+            if(gamepad2.aWasPressed()){
                 rs.setPower(.50);
+                ls.setPower(.50);
+            }
+            if(gamepad2.aWasReleased()){
+                rs.setPower(-.50);
                 ls.setPower(-.50);
             }
 
-            if (gamepad2.aWasReleased()) {
-                rs.setPower(0);
-                ls.setPower(0);
-            }
+
 
         }
     }

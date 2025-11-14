@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing; // make sure this aligns with class location
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -10,7 +11,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "TestAuto" ,group = "Examples")
+@Autonomous(name = "Auto", group = "Examples")
+@Configurable
 public class Auto extends OpMode {
     private Follower follower;
     private int pathState;
